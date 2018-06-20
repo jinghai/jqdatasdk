@@ -27,10 +27,11 @@ def _run_query(query_object):
     sql = compile_query(query_object)
     from .client import JQDataClient
     df = JQDataClient.instance().fin_query(sql=sql)
+    if 'STK_AH_PRICE_COMP' in sql:
+        df = df.sort_values(by='day')
     return df
 
 run_query = assert_auth(_run_query)
 
 
 __all__.append("run_query")
-
