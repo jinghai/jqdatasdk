@@ -18,6 +18,24 @@ for table_name in names:
     __all__.append(table_name)
 
 
+def format_df(df, sql):
+    # 格式化datafram
+    table = sql.split('`')[1]  # sql获取表名
+
+    # 按day排序的表
+    sort_day = [
+        'STK_AH_PRICE_COMP',
+        'STK_EL_TOP_ACTIVATE',
+        'STK_ML_QUOTA',
+        'STK_EL_CONST_CHANGE'
+        ]
+
+    if table in sort_day:
+        df = df.sort_values(by='day')
+
+    return df
+
+
 def _run_query(query_object):
     from .utils import compile_query
     limit = 3000
@@ -27,9 +45,8 @@ def _run_query(query_object):
     sql = compile_query(query_object)
     from .client import JQDataClient
     df = JQDataClient.instance().fin_query(sql=sql)
-    if 'STK_AH_PRICE_COMP' in sql:
-        df = df.sort_values(by='day')
-    return df
+    return format_df(df, sql)
+
 
 run_query = assert_auth(_run_query)
 
