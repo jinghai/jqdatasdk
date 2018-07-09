@@ -5,6 +5,7 @@
 """
 from .utils import *
 import sys
+from .client import JQDataClient
 
 
 class Finance(object):
@@ -14,6 +15,9 @@ class Finance(object):
 
     def __init__(self, disable_join=False):
         self.__disable_join = True
+        self.__table_names = None
+
+    def init(self):
         self.__table_names = self.__load_table_names()
         for name in self.__table_names:
             setattr(self, name, self.__load_table_class(name))
@@ -28,7 +32,7 @@ class Finance(object):
         #             names.append(table_file[:-3])
         # return names
 
-        lst = JQDataClient.instance().get_table_orm(self.db_name)
+        lst = JQDataClient.instance().get_table_orm(db=self.db_name)
         ####
 
         return lst
@@ -69,7 +73,7 @@ class Finance(object):
         from sqlalchemy.dialects.mysql import TINYINT, TIMESTAMP, DECIMAL
         from sqlalchemy.ext.declarative import declarative_base
 
-        data = JQDataClient.instance().get_table_orm(self.db_name, table_name)
+        data = JQDataClient.instance().get_table_orm(db=self.db_name, table=table_name)
 
         dct = {}
         for k, v in data["columns"]:
